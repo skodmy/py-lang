@@ -63,21 +63,6 @@ def populate_settings_with_file(filename: str= 'settings.py', directory: str= '.
                 set_setting(setting_name, getattr(settings_module, setting_name))
 
 
-def list_available_interpreters(interpreters_exec_names: List[str] = None) -> List[str]:
-    """
-    Produces a list of available interpreters.
-    
-    :param interpreters_exec_names: list of interpreters executables names.
-    :return: 
-    """
-    if interpreters_exec_names is None:
-        interpreters_exec_names = __SETTINGS['INTERPRETERS_EXECUTABLES_NAMES']
-    return [
-        interpreter_exec_name for interpreter_exec_name in interpreters_exec_names
-        if is_available(interpreter_exec_name)
-    ]
-
-
 def list_files_names(interpreters_names: List[str]) -> List[str]:
     """
     Produces a list of files names for results.

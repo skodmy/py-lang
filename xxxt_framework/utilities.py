@@ -1,4 +1,5 @@
 from subprocess import run, PIPE
+from typing import List
 
 INTERPRETERS_EXECUTABLES_NAMES = (
         'python2',
@@ -25,3 +26,18 @@ def is_available(exec_name: str) -> bool:
     if completed_process.returncode == 0:
         return True
     return False
+
+
+def list_available_interpreters(interpreters_exec_names: List[str] = INTERPRETERS_EXECUTABLES_NAMES) -> List[str]:
+    """
+    Produces a list of available interpreters.
+
+    :param interpreters_exec_names: list of interpreters executables names.
+    :return: 
+    """
+    if interpreters_exec_names is None:
+        raise ValueError("interpreters_exec_names can't be None!")
+    return [
+        interpreter_exec_name for interpreter_exec_name in interpreters_exec_names
+        if is_available(interpreter_exec_name)
+    ]
