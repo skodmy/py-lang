@@ -64,7 +64,7 @@ def populate_settings_with_file(filename: str= 'settings.py', directory: str= '.
         raise ValueError
     if filename in __ls_dir(directory):
         from importlib import import_module
-        settings_module = import_module(filename)
+        settings_module = import_module(filename.replace('.py', ''), directory)
         for setting_name in __SETTINGS:
             if hasattr(settings_module, setting_name):
                 set_setting(setting_name, getattr(settings_module, setting_name))
@@ -103,16 +103,16 @@ def list_available_interpreters(interpreters_exec_names: List[str] = None) -> Li
     ]
 
 
-def list_files_names(interpret_names: List[str]) -> List[str]:
+def list_files_names(interpreters_names: List[str]) -> List[str]:
     """
     Produces a list of files names for results.
     
-    :param interpret_names: 
+    :param interpreters_names: 
     :return: 
     """
-    if interpret_names is None or len(interpret_names) == 0:
+    if interpreters_names is None or len(interpreters_names) == 0:
         raise ValueError
-    return [name + '.txt' for name in interpret_names]
+    return [interpreter_name + '.txt' for interpreter_name in interpreters_names]
 
 
 def explore_for_files(directory: str='.') -> List[str]:
@@ -125,7 +125,7 @@ def explore_for_files(directory: str='.') -> List[str]:
     return [
         entry for entry in __ls_dir(directory)
         if any([
-            entry.endswith(suffix) for suffix in __SETTINGS['XXXT_FILES_SUFFIXES']
+            entry.endswith('_' + suffix + 't.py') for suffix in __SETTINGS['XXXT_FILES_SUFFIXES']
         ])
     ]
 
@@ -140,8 +140,11 @@ def execute_xxxt_file(filename: str, interpreter_exec_name: str) -> int:
     """
     if filename is None or filename == '':
         raise ValueError
-    if not filename.endswith('_test.py'):
-        raise ValueError
+    for suffix in __SETTINGS['XXXT_FILES_SUFFIXES']:
+        if filename.endswith('_' + suffix + 't.py'):
+            break
+    else:
+        raise ValueError("Not a xxxt file!")
     return __run((interpreter_exec_name, filename), stdout=__PIPE, stderr=__PIPE).returncode
 
 
@@ -174,7 +177,7 @@ def execute_all_for_all(xxxt_files: List[str]) -> list:
 
 class App:
     """
-    Class that represents an 3xt app.
+    Class that represents a xxxt app.
     
     directory - app's directory.
     settings_filename - a name of a file with settings for the app.
