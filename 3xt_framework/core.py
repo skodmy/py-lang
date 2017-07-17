@@ -147,7 +147,7 @@ def execute_xxxt_file(filename: str, interpreter_exec_name: str) -> int:
 
 def execute_all(xxxt_files: List[str], interpreter_exec_name: str) -> dict:
     """
-    Executes all xxxt files with names from a given list.
+    Executes all xxxt files with names from a given list for a given interpreter.
     
     :param xxxt_files: a list with xxxt files names.
     :param interpreter_exec_name: name of interpreter's executable.
@@ -158,3 +158,15 @@ def execute_all(xxxt_files: List[str], interpreter_exec_name: str) -> dict:
     if interpreter_exec_name is None:
         raise ValueError("interpreter_exec_name can't be None!")
     return {xxxt_file: execute_xxxt_file(xxxt_file, interpreter_exec_name) for xxxt_file in xxxt_files}
+
+
+def execute_all_for_all(xxxt_files: List[str]) -> list:
+    """
+    Executes all xxxt files with names from a given list for all available interpreters.
+    
+    :param xxxt_files: a list with xxxt files names.
+    :return: a list of dictionaries which describes a status of execution xxxt files for each available interpreter.
+    """
+    return [
+        execute_all(xxxt_files, available_interpreter) for available_interpreter in __SETTINGS['AVAILABLE_INTERPRETERS']
+    ]
