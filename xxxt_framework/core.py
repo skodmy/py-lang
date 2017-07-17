@@ -130,13 +130,13 @@ def explore_for_files(directory: str='.') -> List[str]:
     ]
 
 
-def execute_xxxt_file(filename: str, interpreter_exec_name: str) -> tuple:
+def execute_xxxt_file(filename: str, interpreter_exec_name: str) -> dict:
     """
     Executes a xxxt file with a given interpreter's executable name.
     
-    :param filename: name of the xxxt file.
-    :param interpreter_exec_name: 
-    :return: 
+    :param filename: a name of the xxxt file.
+    :param interpreter_exec_name: interpreter's executable name.
+    :return: a dictionary with a result of execution.
     """
     if filename is None or filename == '':
         raise ValueError
@@ -145,9 +145,12 @@ def execute_xxxt_file(filename: str, interpreter_exec_name: str) -> tuple:
             break
     else:
         raise ValueError("Not a xxxt file!")
-    completed_process = __run((interpreter_exec_name, filename), stdout=__PIPE, stderr=__PIPE).returncode
-    return 'SUCCESS' if not completed_process.returncode else 'FAILURE', \
-           completed_process.stdout if not completed_process.returncode else completed_process.stderr
+    completed_process = __run((interpreter_exec_name, filename), stdout=__PIPE, stderr=__PIPE)
+    return {
+        'status': 'SUCCESS' if not completed_process.returncode else 'FAILURE',
+        'interpreter': interpreter_exec_name,
+        'output': completed_process.stdout if not completed_process.returncode else completed_process.stderr
+    }
 
 
 def execute_all(xxxt_files: List[str], interpreter_exec_name: str) -> dict:
