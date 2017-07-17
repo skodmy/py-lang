@@ -1,9 +1,9 @@
-from os import name as __os_name, listdir as __ls_dir
-from subprocess import run as __run, PIPE as __PIPE
+import os
+import subprocess
 from typing import List, Any
 
 __SETTINGS = {
-    'ENVIRONMENT': __os_name,
+    'ENVIRONMENT': os.name,
     'AVAILABLE_INTERPRETERS': [],
     'XXXT_FILES_SUFFIXES': ['spd', 'mmr'],
     'DISPLAY_RESULT': True,
@@ -55,7 +55,7 @@ def populate_settings_with_file(filename: str= 'settings.py', directory: str= '.
         raise ValueError
     if directory == '':
         raise ValueError
-    if filename in __ls_dir(directory):
+    if filename in os.listdir(directory):
         from importlib import import_module
         settings_module = import_module(filename.replace('.py', ''), directory)
         for setting_name in __SETTINGS:
@@ -83,7 +83,7 @@ def explore_for_files(directory: str='.') -> List[str]:
     :return: a list of found files.
     """
     return [
-        entry for entry in __ls_dir(directory)
+        entry for entry in os.listdir(directory)
         if any([
             entry.endswith('_' + suffix + 't.py') for suffix in __SETTINGS['XXXT_FILES_SUFFIXES']
         ])
@@ -105,7 +105,7 @@ def execute_xxxt_file(filename: str, interpreter_exec_name: str) -> dict:
             break
     else:
         raise ValueError("Not a xxxt file!")
-    completed_process = __run((interpreter_exec_name, filename), stdout=__PIPE, stderr=__PIPE)
+    completed_process = subprocess.run((interpreter_exec_name, filename), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return {
         'status': 'SUCCESS' if not completed_process.returncode else 'FAILURE',
         'interpreter': interpreter_exec_name,

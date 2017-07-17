@@ -1,4 +1,4 @@
-from subprocess import run, PIPE
+import subprocess
 from typing import List
 
 INTERPRETERS_EXECUTABLES_NAMES = (
@@ -20,7 +20,7 @@ def is_available(exec_name: str) -> bool:
     if exec_name == '' or exec_name is None:
         raise ValueError('exec_name can not be None or empty string!')
     try:
-        completed_process = run((exec_name, '--version'), stdout=PIPE, stderr=PIPE)
+        completed_process = subprocess.run((exec_name, '--version'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except FileNotFoundError:
         return False
     if completed_process.returncode == 0:
