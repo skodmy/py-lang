@@ -4,13 +4,6 @@ from typing import List, Any
 
 __SETTINGS = {
     'ENVIRONMENT': __os_name,
-    'INTERPRETERS_EXECUTABLES_NAMES': [
-        'python2',
-        'python3',
-        'pypy',
-        'pypy3',
-        'jython',
-    ],
     'AVAILABLE_INTERPRETERS': [],
     'XXXT_FILES_SUFFIXES': ['spd', 'mmr'],
     'DISPLAY_RESULT': True,
