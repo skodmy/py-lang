@@ -4,7 +4,7 @@ from typing import List, Any
 
 __SETTINGS = {
     'ENVIRONMENT': os.name,
-    'AVAILABLE_INTERPRETERS': [],
+    'AVAILABLE_INTERPRETERS': ['python3'],
     'XXXT_FILES_SUFFIXES': ['spd', 'mmr'],
     'DISPLAY_RESULT': True,
     'WRITE_RESULT_TO_FILE': False,
