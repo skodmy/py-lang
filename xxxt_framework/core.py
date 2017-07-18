@@ -103,7 +103,7 @@ def execute_xxxt_file(filename: str, interpreter_exec_name: str, files_names_suf
     :return: a dictionary with a result of execution.
     """
     if filename is None or filename == '':
-        raise ValueError
+        raise ValueError("filename can't be None or empty string!")
     if files_names_suffixes is None:
         files_names_suffixes = __SETTINGS['XXXT_FILES_NAMES_SUFFIXES']
     for suffix in files_names_suffixes:
@@ -111,12 +111,20 @@ def execute_xxxt_file(filename: str, interpreter_exec_name: str, files_names_suf
             break
     else:
         raise ValueError("Not a xxxt file!")
-    completed_process = subprocess.run((interpreter_exec_name, filename), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return {
-        'status': 'SUCCESS' if not completed_process.returncode else 'FAILURE',
+    execution_result = {
+        'status': "FAILURE",
         'interpreter': interpreter_exec_name,
-        'output': completed_process.stdout if not completed_process.returncode else completed_process.stderr
+        'output': b'Interpreter\'s exe not found!'
     }
+    try:
+        completed_process = subprocess.run((interpreter_exec_name, filename), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        execution_result.update({
+            'status': 'SUCCESS' if not completed_process.returncode else 'FAILURE',
+            'output': completed_process.stdout if not completed_process.returncode else completed_process.stderr
+        })
+    except FileNotFoundError:
+        pass
+    return execution_result
 
 
 def execute_all(xxxt_files: List[str], interpreter_exec_name: str) -> dict:
