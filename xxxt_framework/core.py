@@ -4,6 +4,7 @@ from typing import Union, Tuple, List, Any
 
 __SETTINGS = {
     'ENVIRONMENT': os.name,
+    'CURRENT_WORKING_DIRECTORY': os.getcwd(),
     'AVAILABLE_INTERPRETERS_EXECUTABLES_NAMES': ['python3'],
     'XXXT_FILES_NAMES_SUFFIXES': ['spd', 'mmr'],
     'DISPLAY_RESULT': True,
@@ -34,7 +35,7 @@ def set_setting(name: str, value: Any) -> bool:
     return False
 
 
-def populate_settings_with_file(filename: str= 'settings.py', directory: str= '.') -> None:
+def populate_settings_with_file(filename: str= 'settings.py', directory: str=None) -> None:
     """
     Populates __SETTINGS dictionary with pairs defined in a file with a name filename within a directory.
     
@@ -42,6 +43,8 @@ def populate_settings_with_file(filename: str= 'settings.py', directory: str= '.
     :param directory: the directory in which the file is located.
     :return: None.
     """
+    if directory is None:
+        directory = __SETTINGS['CURRENT_WORKING_DIRECTORY']
     if not isinstance(filename, str):
         raise TypeError("filename argument must be a string, not {}".format(filename.__class__.__name__))
     if not isinstance(directory, str):
@@ -62,7 +65,7 @@ def populate_settings_with_file(filename: str= 'settings.py', directory: str= '.
         raise FileNotFoundError("File with a name 'filename' was not found in directory 'directory'")
 
 
-def explore_dir_for_files(directory: str= '.', files_names_suffixes: Union[Tuple[str], List[str]]=None) -> List[str]:
+def explore_dir_for_files(directory: str=None, files_names_suffixes: Union[Tuple[str], List[str]]=None) -> List[str]:
     """
     Explores a directory for files that match filter's condition.
     
@@ -70,16 +73,18 @@ def explore_dir_for_files(directory: str= '.', files_names_suffixes: Union[Tuple
     :param files_names_suffixes: a list of suffixes with which should end files in the directory.
     :return: a list of found files.
     """
+    if directory is None:
+        directory = __SETTINGS['CURRENT_WORKING_DIRECTORY']
+    if files_names_suffixes is None:
+        files_names_suffixes = __SETTINGS['XXXT_FILES_NAMES_SUFFIXES']
     if not isinstance(directory, str):
         raise TypeError("directory argument must be a string, not {}".format(directory.__class__.__name__))
     if not isinstance(files_names_suffixes, (tuple, list)):
-        raise TypeError("files_names_suffixes argument must be a tuple or a list, not {}".format(
+        raise TypeError("files_names_suffixes argument must be a tuple of strings or a list of strings, not {}".format(
             files_names_suffixes.__class__.__name__
         ))
     if directory == '':
-        raise ValueError("directory value can't be an empty string!")
-    if files_names_suffixes is None:
-        files_names_suffixes = __SETTINGS['XXXT_FILES_NAMES_SUFFIXES']
+        raise ValueError("directory value can't be an empty string")
     return [
         entry for entry in os.listdir(directory)
         if any([
@@ -98,22 +103,22 @@ def execute_xxxt_file(filename: str, interpreter_exec_name: str, files_names_suf
     :param files_names_suffixes: a list of suffixes with which should end each file.
     :return: a dictionary with a result of execution.
     """
+    if files_names_suffixes is None:
+        files_names_suffixes = __SETTINGS['XXXT_FILES_NAMES_SUFFIXES']
     if not isinstance(filename, str):
         raise TypeError("filename argument must be a string, not {}".format(filename.__class__.__name__))
     if not isinstance(interpreter_exec_name, str):
         raise TypeError("interpreter_exec_name argument must be a string, not {}".format(
             interpreter_exec_name.__class__.__name__
         ))
-    if not isinstance(files_names_suffixes, (tuple, list, None.__class__)):
-        raise TypeError("files_names_suffixes argument must be a tuple, a list or a NoneType, not {}".format(
+    if not isinstance(files_names_suffixes, (tuple, list)):
+        raise TypeError("files_names_suffixes argument must be a tuple of strings, a list of strings, not {}".format(
             files_names_suffixes.__class__.__name__
         ))
     if filename == '':
         raise ValueError("filename value can't be an empty string")
     if interpreter_exec_name == '':
         raise ValueError("interpreter_exec_name value can't be an empty string")
-    if files_names_suffixes is None:
-        files_names_suffixes = __SETTINGS['XXXT_FILES_NAMES_SUFFIXES']
     for suffix in files_names_suffixes:
         if filename.endswith('_' + suffix + 't.py'):
             break
@@ -148,7 +153,7 @@ def execute_all(xxxt_files: Union[Tuple[str], List[str]], interpreter_exec_name:
     :return: a dictionary which describes a status of execution for each xxxt file.
     """
     if not isinstance(xxxt_files, (tuple, list)):
-        raise TypeError("xxxt_files argument must be a tuple or a list, not {}".format(
+        raise TypeError("xxxt_files argument must be a tuple of strings or a list of strings, not {}".format(
             xxxt_files.__class__.__name__
         ))
     return {xxxt_file: execute_xxxt_file(xxxt_file, interpreter_exec_name, files_names_suffixes)
@@ -167,6 +172,9 @@ def execute_all_for_all(xxxt_files: List[str], interpreters_execs_names: Union[T
     """
     if interpreters_execs_names is None:
         interpreters_execs_names = __SETTINGS['AVAILABLE_INTERPRETERS_EXECUTABLES_NAMES']
+    if not isinstance(interpreters_execs_names, (tuple, list)):
+        raise TypeError("interpreters_execs_names argument must be a tuple of strings or list of strings, not {}".
+                        format(interpreters_execs_names.__class__.__name__))
     return [
         execute_all(xxxt_files, interpreter_exec_name, files_names_suffixes)
         for interpreter_exec_name in interpreters_execs_names
