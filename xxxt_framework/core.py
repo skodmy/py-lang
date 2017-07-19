@@ -7,9 +7,6 @@ __SETTINGS = {
     'AVAILABLE_INTERPRETERS_EXECUTABLES_NAMES': ['python3'],
     'XXXT_FILES_NAMES_SUFFIXES': ['spd', 'mmr'],
     'DISPLAY_RESULT': True,
-    'WRITE_RESULT_TO_FILE': False,
-    'RESULT_FILE_EXTENSION': 'txt',
-    'RESULTS_FILES_MAP': dict(),
 }
 
 
@@ -65,21 +62,7 @@ def populate_settings_with_file(filename: str= 'settings.py', directory: str= '.
         raise FileNotFoundError("File with a name 'filename' was not found in directory 'directory'")
 
 
-def list_files_names(interpreters_execs_names: Union[Tuple[str], List[str]]) -> List[str]:
-    """
-    Produces a list of files names for results.
-    
-    :param interpreters_execs_names: 
-    :return: 
-    """
-    if not isinstance(interpreters_execs_names, (tuple, list)):
-        raise TypeError("interpreters_execs_names argument must be a tuple or a list, not {}".format(
-            interpreters_execs_names.__class__.__name__
-        ))
-    return [interpreter_name + '.txt' for interpreter_name in interpreters_execs_names]
-
-
-def explore_for_files(directory: str='.', files_names_suffixes: Union[Tuple[str], List[str]]=None) -> List[str]:
+def explore_dir_for_files(directory: str= '.', files_names_suffixes: Union[Tuple[str], List[str]]=None) -> List[str]:
     """
     Explores a directory for files that match filter's condition.
     
