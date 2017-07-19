@@ -7,7 +7,7 @@ __SETTINGS = {
     'CURRENT_WORKING_DIRECTORY': os.getcwd(),
     'AVAILABLE_INTERPRETERS_EXECUTABLES_NAMES': ['python3'],
     'XXXT_FILES_NAMES_SUFFIXES': ['spd', 'mmr'],
-    'DISPLAY_RESULT': True,
+    'PRINT_EXECUTION_RESULT_ON_CONSOLE': True,
 }
 
 
@@ -21,16 +21,21 @@ def settings() -> dict:
     return deepcopy(__SETTINGS)
 
 
-def set_setting(name: str, value: Any) -> bool:
+def set_setting(name: str, value: Any, target: dict=None) -> bool:
     """
     Apply a setting to the __SETTINGS dictionary.
     
-    :param name: setting's name, must be of str type.
+    :param name: setting's name, must be of type str.
     :param value: setting's value, can be of any type.
+    :param target: a dictionary which contains settings.
     :return: True if setting was set, False otherwise.
     """
-    if name in __SETTINGS and value is not None and value != '':
-        __SETTINGS[name] = value
+    if target is None:
+        target = __SETTINGS
+    if not isinstance(target, dict):
+        raise TypeError("target must be a dictionary, not {}".format(target.__class__.__name__))
+    if name in target and value is not None and value != '':
+        target[name] = value
         return True
     return False
 
