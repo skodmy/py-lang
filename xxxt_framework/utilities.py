@@ -1,12 +1,12 @@
 import subprocess
-from typing import List
+from typing import Union, Tuple, List
 
 INTERPRETERS_EXECUTABLES_NAMES = (
-        'python2',
-        'python3',
-        'pypy',
-        'pypy3',
-        'jython',
+    'python2',
+    'python3',
+    'pypy',
+    'pypy3',
+    'jython',
 )
 
 
@@ -17,27 +17,31 @@ def is_available(exec_name: str) -> bool:
     :param exec_name: the name of the executable.
     :return: True if it's available, False otherwise.
     """
-    if exec_name == '' or exec_name is None:
-        raise ValueError('exec_name can not be None or empty string!')
+    if not isinstance(exec_name, str):
+        raise TypeError("exec_name argument must be a string, not {}".format(exec_name.__class__.__name__))
+    if exec_name == '':
+        raise ValueError("exec_name value can't be an empty string")
     try:
         completed_process = subprocess.run((exec_name, '--version'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if completed_process.returncode == 0:
+            return True
     except FileNotFoundError:
-        return False
-    if completed_process.returncode == 0:
-        return True
+        pass
     return False
 
 
-def list_available_interpreters(interpreters_exec_names: List[str] = INTERPRETERS_EXECUTABLES_NAMES) -> List[str]:
+def list_available_interpreters_execs_names(interpreters_execs_names: Union[Tuple[str], List[str]] =
+                                            INTERPRETERS_EXECUTABLES_NAMES) -> List[str]:
     """
     Produces a list of available interpreters.
 
-    :param interpreters_exec_names: list of interpreters executables names.
-    :return: 
+    :param interpreters_execs_names: list of interpreters executables names.
+    :return: list
     """
-    if interpreters_exec_names is None:
-        raise ValueError("interpreters_exec_names can't be None!")
+    if not isinstance(interpreters_execs_names, (tuple, list)):
+        raise TypeError("interpreters_execs_names argument must be a tuple of strings or a list of strings, not {}".
+                        format(interpreters_execs_names.__class__.__name__))
     return [
-        interpreter_exec_name for interpreter_exec_name in interpreters_exec_names
+        interpreter_exec_name for interpreter_exec_name in interpreters_execs_names
         if is_available(interpreter_exec_name)
     ]
