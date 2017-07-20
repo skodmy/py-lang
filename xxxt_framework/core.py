@@ -55,11 +55,11 @@ def populate_settings_with_file(filename: str = 'settings.py', directory: str = 
     if not isinstance(directory, str):
         raise TypeError("directory argument must be a string, not {}".format(directory.__class__.__name__))
     if filename == '':
-        raise ValueError("filename can't be an empty string!")
+        raise ValueError("filename's value can't be an empty string!")
     if directory == '':
-        raise ValueError("directory can't be an empty string!")
+        raise ValueError("directory's value can't be an empty string!")
     if not filename.endswith('.py'):
-        raise ValueError("file is not a python module!")
+        raise ValueError("file with name 'filename' is not a python module!")
     if filename in os.listdir(directory):
         from importlib import import_module
         settings_module = import_module(filename.replace('.py', ''), directory)
@@ -70,8 +70,10 @@ def populate_settings_with_file(filename: str = 'settings.py', directory: str = 
         raise FileNotFoundError("File with a name 'filename' was not found in directory 'directory'")
 
 
-def explore_dir_for_files(directory: str = None, files_names_suffixes: Union[Tuple[str], List[str]] = None) -> List[
-    str]:
+def explore_dir_for_files(
+        directory: str = None,
+        files_names_suffixes: Union[Tuple[str], List[str]] = None
+) -> List[str]:
     """
     Explores a directory for files that match filter's condition.
     
@@ -90,7 +92,7 @@ def explore_dir_for_files(directory: str = None, files_names_suffixes: Union[Tup
             files_names_suffixes.__class__.__name__
         ))
     if directory == '':
-        raise ValueError("directory value can't be an empty string")
+        raise ValueError("directory's value can't be an empty string")
     return [
         entry for entry in os.listdir(directory)
         if any([
@@ -122,9 +124,9 @@ def execute(xxxt_filename: str, interpreter_exec_name: str,
             files_names_suffixes.__class__.__name__
         ))
     if xxxt_filename == '':
-        raise ValueError("filename value can't be an empty string")
+        raise ValueError("filename's value can't be an empty string")
     if interpreter_exec_name == '':
-        raise ValueError("interpreter_exec_name value can't be an empty string")
+        raise ValueError("interpreter_exec_name's value can't be an empty string")
     for suffix in files_names_suffixes:
         if xxxt_filename.endswith('_' + suffix + 't.py'):
             break
@@ -203,7 +205,7 @@ def process(xxxt_file_execution_result: Dict[str, Any], callback: Callable[[Dict
             xxxt_file_execution_result.__class__.__name__
         ))
     if not callable(callback):
-        raise ValueError("callback argument must be a callable object like (dict) -> any")
+        raise ValueError("callback's value must be a callable object like (dict) -> any")
     return callback(xxxt_file_execution_result)
 
 
@@ -226,7 +228,7 @@ def process_all(
             xxxt_files_executions_results.__class__.__name__
         ))
     if not callable(all_callback):
-        raise ValueError("all_callback argument must be a callable object like (list) -> any")
+        raise ValueError("all_callback's value must be a callable object like (list) -> any")
     return all_callback([
         process(xxxt_files_executions_results[xxxt_filename], callback)
         for xxxt_filename in xxxt_files_executions_results
@@ -256,7 +258,7 @@ def process_all_for_all(
             executions_results_for_each_interpreter.__class__.__name__
         ))
     if not callable(for_all_callback):
-        raise ValueError("for_all_callback argument must be a callable object like (any) -> any")
+        raise ValueError("for_all_callback's value must be a callable object like (any) -> any")
     return for_all_callback([
         process_all(executions_results_for_each_interpreter[interpreter_execution_result], callback, all_callback)
         for interpreter_execution_result in executions_results_for_each_interpreter
