@@ -239,7 +239,7 @@ def process_all_for_all(
         executions_results_for_each_interpreter: Dict[Dict[str, Dict[str, Any]]],
         callback: Callable[[Dict[str, Any]], Any],
         all_callback: Callable[[List[Any]], Any],
-        for_all_callback: Callable[[Any], Any]
+        for_all_callback: Callable[List[Any], Any]
 ) -> Any:
     """
     Applies a callback to each xxxt file execution result in a given dictionary and produces a list of calls results.

@@ -1,5 +1,5 @@
 import subprocess
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Dict, Any
 
 INTERPRETERS_EXECUTABLES_NAMES = (
     'python2',
@@ -48,18 +48,57 @@ def list_available_interpreters_execs_names(
     ]
 
 
-def split2list_of_strings(bts: bytes, sep: Union[bytes, str]= '\n') -> List[str]:
+def split2list_of_strings(src: Union[bytes, str], sep: Union[bytes, str]= '\n') -> Union[List[str], str]:
     """
-    Splits bytes with a given separator and converts results to stings.
+    Splits bytes by using a given separator and converts results to strings. If src is a string then returns it's value.
     
-    :param bts: the bytes which will be processed.
+    :param src: a data source which will be processed.
     :param sep: the separator which will be used for splitting, may be of bytes type or a string.
     :return: a list of strings from the given bytes.
     """
-    if not isinstance(bts, bytes):
-        raise TypeError("bts argument must be of bytes type, not {}".format(bts.__class__.__name__))
+    if not isinstance(src, (bytes, str)):
+        raise TypeError("src argument must be of bytes type or a string, not {}".format(src.__class__.__name__))
+    if isinstance(src, str):
+        return src
     if not isinstance(sep, (bytes, str)):
         raise TypeError("sep argument must be of bytes type or a string, not {}".format(sep.__class__.__name__))
     if isinstance(sep, bytes):
-        return [bt.decode() for bt in bts.split(sep)]
-    return bts.decode().split(sep)
+        return [bt.decode() for bt in src.split(sep)]
+    return src.decode().split(sep)
+
+
+def print_callback(xxxt_file_execution_result: Dict[str, Any]) -> None:
+    """
+    Prints xxxt file execution result on console.
+    
+    :param xxxt_file_execution_result: a dictionary with execution result of a xxxt file.
+    :return: None.
+    """
+    for key in xxxt_file_execution_result.keys()[:len(xxxt_file_execution_result)-1]:
+        print("{} => {};".format(key, split2list_of_strings(xxxt_file_execution_result[key])))
+
+
+def print_all_callback(print_callback_results: List[Any]) -> None:
+    """
+    Checks print_callback_results argument's type.
+    
+    :param print_callback_results: 
+    :return: None.
+    """
+    if not isinstance(print_callback_results, list):
+        raise TypeError("xxxt_files_executions_results argument must be a list, not {}".format(
+            print_callback_results.__class__.__name__
+        ))
+
+
+def print_all_for_all_callback(print_all_callback_results: List[Any]) -> None:
+    """
+    Checks print_all_callback_results argument's type.
+    
+    :param print_all_callback_results: 
+    :return: None.
+    """
+    if not isinstance(print_all_callback_results, list):
+        raise TypeError("print_all_callback_result argument must be a list, not {}".format(
+            print_all_callback_results.__class__.__name__
+        ))
