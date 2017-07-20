@@ -1,6 +1,6 @@
 import os
 import subprocess
-from typing import Union, Tuple, List, Any
+from typing import Union, Tuple, List, Any, Callable, Dict
 
 __SETTINGS = {
     'ENVIRONMENT': os.name,
@@ -21,7 +21,7 @@ def settings() -> dict:
     return deepcopy(__SETTINGS)
 
 
-def set_setting(name: str, value: Any, target: dict=None) -> bool:
+def set_setting(name: str, value: Any, target: dict = None) -> bool:
     """
     Apply a setting to the __SETTINGS dictionary.
     
@@ -40,7 +40,7 @@ def set_setting(name: str, value: Any, target: dict=None) -> bool:
     return False
 
 
-def populate_settings_with_file(filename: str= 'settings.py', directory: str=None) -> None:
+def populate_settings_with_file(filename: str = 'settings.py', directory: str = None) -> None:
     """
     Populates __SETTINGS dictionary with pairs defined in a file with a name filename within a directory.
     
@@ -70,7 +70,8 @@ def populate_settings_with_file(filename: str= 'settings.py', directory: str=Non
         raise FileNotFoundError("File with a name 'filename' was not found in directory 'directory'")
 
 
-def explore_dir_for_files(directory: str=None, files_names_suffixes: Union[Tuple[str], List[str]]=None) -> List[str]:
+def explore_dir_for_files(directory: str = None, files_names_suffixes: Union[Tuple[str], List[str]] = None) -> List[
+    str]:
     """
     Explores a directory for files that match filter's condition.
     
@@ -98,20 +99,20 @@ def explore_dir_for_files(directory: str=None, files_names_suffixes: Union[Tuple
     ]
 
 
-def execute_xxxt_file(filename: str, interpreter_exec_name: str, files_names_suffixes: Union[Tuple[str],
-                                                                                             List[str]]=None) -> dict:
+def execute(xxxt_filename: str, interpreter_exec_name: str,
+            files_names_suffixes: Union[Tuple[str], List[str]] = None) -> Dict[str, Any]:
     """
     Executes a xxxt file with a given interpreter's executable name.
     
-    :param filename: a name of the xxxt file.
+    :param xxxt_filename: a name of the xxxt file.
     :param interpreter_exec_name: interpreter's executable name.
     :param files_names_suffixes: a list of suffixes with which should end each file.
     :return: a dictionary with a result of execution.
     """
     if files_names_suffixes is None:
         files_names_suffixes = __SETTINGS['XXXT_FILES_NAMES_SUFFIXES']
-    if not isinstance(filename, str):
-        raise TypeError("filename argument must be a string, not {}".format(filename.__class__.__name__))
+    if not isinstance(xxxt_filename, str):
+        raise TypeError("filename argument must be a string, not {}".format(xxxt_filename.__class__.__name__))
     if not isinstance(interpreter_exec_name, str):
         raise TypeError("interpreter_exec_name argument must be a string, not {}".format(
             interpreter_exec_name.__class__.__name__
@@ -120,12 +121,12 @@ def execute_xxxt_file(filename: str, interpreter_exec_name: str, files_names_suf
         raise TypeError("files_names_suffixes argument must be a tuple of strings, a list of strings, not {}".format(
             files_names_suffixes.__class__.__name__
         ))
-    if filename == '':
+    if xxxt_filename == '':
         raise ValueError("filename value can't be an empty string")
     if interpreter_exec_name == '':
         raise ValueError("interpreter_exec_name value can't be an empty string")
     for suffix in files_names_suffixes:
-        if filename.endswith('_' + suffix + 't.py'):
+        if xxxt_filename.endswith('_' + suffix + 't.py'):
             break
     else:
         raise ValueError("Not a xxxt file!")
@@ -136,7 +137,7 @@ def execute_xxxt_file(filename: str, interpreter_exec_name: str, files_names_suf
     }
     try:
         completed_process = subprocess.run(
-            (interpreter_exec_name, filename), stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            (interpreter_exec_name, xxxt_filename), stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         execution_result.update({
             'status': 'SUCCESS' if not completed_process.returncode else 'FAILURE',
@@ -147,30 +148,33 @@ def execute_xxxt_file(filename: str, interpreter_exec_name: str, files_names_suf
     return execution_result
 
 
-def execute_all(xxxt_files: Union[Tuple[str], List[str]], interpreter_exec_name: str,
-                files_names_suffixes: Union[Tuple[str], List[str]]=None) -> dict:
+def execute_all(xxxt_filenames: Union[Tuple[str], List[str]], interpreter_exec_name: str,
+                files_names_suffixes: Union[Tuple[str], List[str]] = None) -> Dict[str, Dict[str, Any]]:
     """
     Executes all xxxt files with names from a given list for a given interpreter.
     
-    :param xxxt_files: a list with xxxt files names.
+    :param xxxt_filenames: a list with xxxt filenames.
     :param interpreter_exec_name: name of interpreter's executable.
     :param files_names_suffixes: a list of suffixes with which should end each file.
     :return: a dictionary which describes a status of execution for each xxxt file.
     """
-    if not isinstance(xxxt_files, (tuple, list)):
+    if not isinstance(xxxt_filenames, (tuple, list)):
         raise TypeError("xxxt_files argument must be a tuple of strings or a list of strings, not {}".format(
-            xxxt_files.__class__.__name__
+            xxxt_filenames.__class__.__name__
         ))
-    return {xxxt_file: execute_xxxt_file(xxxt_file, interpreter_exec_name, files_names_suffixes)
-            for xxxt_file in xxxt_files}
+    return {xxxt_filename: execute(xxxt_filename, interpreter_exec_name, files_names_suffixes)
+            for xxxt_filename in xxxt_filenames}
 
 
-def execute_all_for_all(xxxt_files: List[str], interpreters_execs_names: Union[Tuple[str], List[str]]=None,
-                        files_names_suffixes: Union[Tuple[str], List[str]] = None) -> list:
+def execute_all_for_all(
+        xxxt_filenames: List[str],
+        interpreters_execs_names: Union[Tuple[str], List[str]] = None,
+        files_names_suffixes: Union[Tuple[str], List[str]] = None
+) -> Dict[str, Dict[str, Dict[str, Any]]]:
     """
     Executes all xxxt files with names from a given list for all available interpreters.
     
-    :param xxxt_files: a list with xxxt files names.
+    :param xxxt_filenames: a list with xxxt filenames.
     :param interpreters_execs_names: a list with interpreters executables names.
     :param files_names_suffixes: a list of suffixes with which should end each file.
     :return: a list of dictionaries which describes a status of execution xxxt files for each available interpreter.
@@ -180,7 +184,80 @@ def execute_all_for_all(xxxt_files: List[str], interpreters_execs_names: Union[T
     if not isinstance(interpreters_execs_names, (tuple, list)):
         raise TypeError("interpreters_execs_names argument must be a tuple of strings or list of strings, not {}".
                         format(interpreters_execs_names.__class__.__name__))
-    return [
-        execute_all(xxxt_files, interpreter_exec_name, files_names_suffixes)
+    return {
+        interpreter_exec_name: execute_all(xxxt_filenames, interpreter_exec_name, files_names_suffixes)
         for interpreter_exec_name in interpreters_execs_names
-    ]
+    }
+
+
+def process(xxxt_file_execution_result: Dict[str, Any], callback: Callable[[Dict[str, Any]], Any]) -> Any:
+    """
+    Applies callback to a xxxt_file_execution_result and returns it's call result.
+    
+    :param xxxt_file_execution_result: a dictionary which contains result's data of execution.
+    :param callback: a callable like (dict) -> any that will be used to process xxxt file execution result.
+    :return: callback's call result.
+    """
+    if not isinstance(xxxt_file_execution_result, dict):
+        raise TypeError("file_execution_result argument must be a dictionary, not {}".format(
+            xxxt_file_execution_result.__class__.__name__
+        ))
+    if not callable(callback):
+        raise ValueError("callback argument must be a callable object like (dict) -> any")
+    return callback(xxxt_file_execution_result)
+
+
+def process_all(
+        xxxt_files_executions_results: Dict[str, Dict[str, Any]],
+        callback: Callable[[Dict[str, Dict[str, Any]]], Any],
+        all_callback: Callable[[List[Any]], Any]
+) -> Any:
+    """
+    Applies a callback to each xxxt file execution result in a given dictionary and produces a list of calls results.
+    Applies to the list of calls results all_callback and returns it's return value.
+    
+    :param xxxt_files_executions_results: the dictionary with data of xxxt files executions results.
+    :param callback: a callable object which will be applied to each xxxt file execution result.
+    :param all_callback: a callable object which will be applied to the list of calls results.
+    :return: all_callback's call result.
+    """
+    if not isinstance(xxxt_files_executions_results, dict):
+        raise TypeError("xxxt_files_executions_results argument must be a dictionary, not {}".format(
+            xxxt_files_executions_results.__class__.__name__
+        ))
+    if not callable(all_callback):
+        raise ValueError("all_callback argument must be a callable object like (list) -> any")
+    return all_callback([
+        process(xxxt_files_executions_results[xxxt_filename], callback)
+        for xxxt_filename in xxxt_files_executions_results
+    ])
+
+
+def process_all_for_all(
+        executions_results_for_each_interpreter: Dict[Dict[str, Dict[str, Any]]],
+        callback: Callable[[Dict[str, Any]], Any],
+        all_callback: Callable[[List[Any]], Any],
+        for_all_callback: Callable[[Any], Any]
+) -> Any:
+    """
+    Applies a callback to each xxxt file execution result in a given dictionary and produces a list of calls results.
+    Produces a list by applying to the each list of calls results all_callback.
+    Then applies to that list for_all_callback and returns it's return value.
+    
+    :param executions_results_for_each_interpreter: a dictionary with data of executions results for each interpreter.
+    :param callback: a callable object which will be applied to each xxxt file execution result.
+    :param all_callback: a callable object which will be applied to the list of calls results.
+    :param for_all_callback: a callable object which will be applied to the list produced by a list comprehension and 
+    all_callback calls.
+    :return: for_all_callback's call result.
+    """
+    if not isinstance(executions_results_for_each_interpreter, dict):
+        raise TypeError("executions_results_for_each_interpreter argument must be a dictionary, not {}".format(
+            executions_results_for_each_interpreter.__class__.__name__
+        ))
+    if not callable(for_all_callback):
+        raise ValueError("for_all_callback argument must be a callable object like (any) -> any")
+    return for_all_callback([
+        process_all(executions_results_for_each_interpreter[interpreter_execution_result], callback, all_callback)
+        for interpreter_execution_result in executions_results_for_each_interpreter
+    ])
