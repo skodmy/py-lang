@@ -134,7 +134,6 @@ def execute(xxxt_filename: str, interpreter_exec_name: str,
         raise ValueError("Not a xxxt file!")
     execution_result = {
         'status': "FAILURE",
-        'interpreter': interpreter_exec_name,
         'output': b"Interpreter's executable not found!"
     }
     try:
@@ -211,35 +210,42 @@ def process(xxxt_file_execution_result: Dict[str, Any], callback: Callable[[Dict
 
 def process_all(
         xxxt_files_executions_results: Dict[str, Dict[str, Any]],
-        callback: Callable[[Dict[str, Dict[str, Any]]], Any],
-        all_callback: Callable[[List[Any]], Any]
+        xxxt_filename_callback: Callable[[str], Any],
+        process_callback: Callable[[Dict[str, Dict[str, Any]]], Any],
+        process_results_callback: Callable[[List[Tuple[Any, Any]]], Any]
 ) -> Any:
     """
     Applies a callback to each xxxt file execution result in a given dictionary and produces a list of calls results.
     Applies to the list of calls results all_callback and returns it's return value.
     
     :param xxxt_files_executions_results: the dictionary with data of xxxt files executions results.
-    :param callback: a callable object which will be applied to each xxxt file execution result.
-    :param all_callback: a callable object which will be applied to the list of calls results.
-    :return: all_callback's call result.
+    :param xxxt_filename_callback: a callable object which will be applied to each xxxt file's name.
+    :param process_callback: a callable object which will be applied to each xxxt file execution result.
+    :param process_results_callback: a callable object which will be applied to the list of process_callback's calls 
+    results.
+    :return: process_results_callback's call result.
     """
     if not isinstance(xxxt_files_executions_results, dict):
         raise TypeError("xxxt_files_executions_results argument must be a dictionary, not {}".format(
             xxxt_files_executions_results.__class__.__name__
         ))
-    if not callable(all_callback):
-        raise ValueError("all_callback's value must be a callable object like (list) -> any")
-    return all_callback([
-        process(xxxt_files_executions_results[xxxt_filename], callback)
+    if not callable(xxxt_filename_callback):
+        raise ValueError("xxxt_filename_callback's value must be a callable object like (str) -> any")
+    if not callable(process_results_callback):
+        raise ValueError("process_results_callback's value must be a callable object like (list) -> any")
+    return process_results_callback([
+        (xxxt_filename_callback(xxxt_filename), process(xxxt_files_executions_results[xxxt_filename], process_callback))
         for xxxt_filename in xxxt_files_executions_results
     ])
 
 
 def process_all_for_all(
-        executions_results_for_each_interpreter: Dict[Dict[str, Dict[str, Any]]],
-        callback: Callable[[Dict[str, Any]], Any],
-        all_callback: Callable[[List[Any]], Any],
-        for_all_callback: Callable[List[Any], Any]
+        executions_results_for_each_interpreter: Dict[str, Dict[str, Dict[str, Any]]],
+        interpreter_exec_name_callback: Callable[[str], Any],
+        xxxt_filename_callback: Callable[[str], Any],
+        process_callback: Callable[[Dict[str, Any]], Any],
+        process_results_callback: Callable[[List[Tuple[Any, Any]]], Any],
+        process_all_results_callback: Callable[[List[Tuple[Any, Any]]], Any]
 ) -> Any:
     """
     Applies a callback to each xxxt file execution result in a given dictionary and produces a list of calls results.
@@ -247,19 +253,32 @@ def process_all_for_all(
     Then applies to that list for_all_callback and returns it's return value.
     
     :param executions_results_for_each_interpreter: a dictionary with data of executions results for each interpreter.
-    :param callback: a callable object which will be applied to each xxxt file execution result.
-    :param all_callback: a callable object which will be applied to the list of calls results.
-    :param for_all_callback: a callable object which will be applied to the list produced by a list comprehension and 
-    all_callback calls.
-    :return: for_all_callback's call result.
+    :param interpreter_exec_name_callback: a callable object which will be applied to each interpreter's exe name.
+    :param xxxt_filename_callback: a callable object which will be applied to each xxxt file's name.
+    :param process_callback: a callable object which will be applied to each xxxt file execution result.
+    :param process_results_callback: a callable object which will be applied to the list of process_callback's calls 
+    results.
+    :param process_all_results_callback: a callable object which will be applied to the list produced by a list 
+    comprehension and process_results_callback's calls.
+    :return: process_all_results_callback's call result.
     """
     if not isinstance(executions_results_for_each_interpreter, dict):
         raise TypeError("executions_results_for_each_interpreter argument must be a dictionary, not {}".format(
             executions_results_for_each_interpreter.__class__.__name__
         ))
-    if not callable(for_all_callback):
-        raise ValueError("for_all_callback's value must be a callable object like (any) -> any")
-    return for_all_callback([
-        process_all(executions_results_for_each_interpreter[interpreter_execution_result], callback, all_callback)
-        for interpreter_execution_result in executions_results_for_each_interpreter
+    if not callable(interpreter_exec_name_callback):
+        raise ValueError("interpreter_exec_name_callback's value must be a callable object like (str) -> any")
+    if not callable(process_all_results_callback):
+        raise ValueError("process_all_results_callback's value must be a callable object like (any) -> any")
+    return process_all_results_callback([
+        (
+            interpreter_exec_name_callback(interpreter_exec_name),
+            process_all(
+                executions_results_for_each_interpreter[interpreter_exec_name],
+                xxxt_filename_callback,
+                process_callback,
+                process_results_callback
+            )
+        )
+        for interpreter_exec_name in executions_results_for_each_interpreter
     ])
