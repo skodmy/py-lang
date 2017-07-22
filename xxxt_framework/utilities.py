@@ -74,31 +74,41 @@ def print_callback(xxxt_file_execution_result: Dict[str, Any]) -> None:
     :param xxxt_file_execution_result: a dictionary with execution result of a xxxt file.
     :return: None.
     """
-    for key in xxxt_file_execution_result.keys()[:len(xxxt_file_execution_result)-1]:
-        print("{} => {};".format(key, split2list_of_strings(xxxt_file_execution_result[key])))
+    keys = list(xxxt_file_execution_result.keys())
+    for key in keys[:-1]:
+        print("{} => {};".format(key, xxxt_file_execution_result[key]))
+    print("{}: ".format(keys[-1]))
+    for line in split2list_of_strings(xxxt_file_execution_result[keys[-1]]):
+        print(">>> {}".format(line))
+    print()
 
 
-def print_all_callback(print_callback_results: List[Any]) -> None:
+def print_xxxt_filename_callback(xxxt_filename: str) -> None:
     """
-    Checks print_callback_results argument's type.
     
-    :param print_callback_results: 
+    :param xxxt_filename: 
+    :return: 
+    """
+    print("file: '{}';".format(xxxt_filename))
+
+
+def print_interpreter_exec_name_callback(interpreter_exec_name: str) -> None:
+    """
+    
+    :param interpreter_exec_name: 
+    :return: 
+    """
+    sep_line = "#" * 100
+    print(sep_line, "interpreter: {}".format(interpreter_exec_name).upper(), sep_line)
+
+
+def process_none_results_callback(results_list: List[Tuple[None, None]]) -> None:
+    """
+    Deletes reference on unnecessary list of tuples like (None, None).
+    
+    :param results_list: 
     :return: None.
     """
-    if not isinstance(print_callback_results, list):
-        raise TypeError("xxxt_files_executions_results argument must be a list, not {}".format(
-            print_callback_results.__class__.__name__
-        ))
-
-
-def print_all_for_all_callback(print_all_callback_results: List[Any]) -> None:
-    """
-    Checks print_all_callback_results argument's type.
-    
-    :param print_all_callback_results: 
-    :return: None.
-    """
-    if not isinstance(print_all_callback_results, list):
-        raise TypeError("print_all_callback_result argument must be a list, not {}".format(
-            print_all_callback_results.__class__.__name__
-        ))
+    if not isinstance(results_list, list):
+        raise TypeError(" argument must be a list of tuples, not {}".format(results_list.__class__.__name__))
+    del results_list
