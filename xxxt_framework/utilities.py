@@ -85,18 +85,20 @@ def print_callback(xxxt_file_execution_result: Dict[str, Any]) -> None:
 
 def print_xxxt_filename_callback(xxxt_filename: str) -> None:
     """
+    Prints xxxt file's name on console.
     
-    :param xxxt_filename: 
-    :return: 
+    :param xxxt_filename: the xxxt file's name.
+    :return: None.
     """
     print("file: '{}';".format(xxxt_filename))
 
 
 def print_interpreter_exec_name_callback(interpreter_exec_name: str) -> None:
     """
+    Prints interpreter's executable name on console.
     
-    :param interpreter_exec_name: 
-    :return: 
+    :param interpreter_exec_name: the interpreter's executable name.
+    :return: None.
     """
     sep_line = "#" * 100
     print(sep_line, "interpreter: {}".format(interpreter_exec_name).upper(), sep_line)

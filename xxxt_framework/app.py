@@ -1,4 +1,5 @@
 import xxxt_framework.core
+import xxxt_framework.utilities
 from typing import Any
 
 
@@ -33,5 +34,11 @@ class App:
         """
         results = xxxt_framework.core.execute_all_for_all(self._settings['XXXT_FILES'])
         if self._settings['PRINT_EXECUTION_RESULT_ON_CONSOLE']:
-            for result in results:
-                print(result)
+            xxxt_framework.core.process_all_for_all(
+                results,
+                xxxt_framework.utilities.print_interpreter_exec_name_callback,
+                xxxt_framework.utilities.print_xxxt_filename_callback,
+                xxxt_framework.utilities.print_callback,
+                xxxt_framework.utilities.process_none_results_callback,
+                xxxt_framework.utilities.process_none_results_callback
+            )
