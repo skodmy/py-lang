@@ -18,7 +18,7 @@ def compute_pair_difference(
     :param stmt_executor: a callable object that will be used for executing the pair statements.
     :param setup_for_first: a setup for first statement.
     :param setup_for_sec: a setup for second statement.
-    :param times: if stmt_executor's value is timeit.repeat then this will be passed to it's repeat parameter.
+    :param times: if stmt_executor's value is timeit.repeat then this will be passed to its repeat parameter.
     :param return_full: a boolean flag that indicates to return full result or not.
     :return: depends on ret_full argument's value. If it is True then returns a tuple else a float.
     """
@@ -56,7 +56,7 @@ def compr_pair_difference(
     :param stmt_executor: a callable object that will be used for executing the pair statements.
     :param setup_for_first: a setup for first statement.
     :param setup_for_sec: a setup for second statement.
-    :param times: if stmt_executor's value is timeit.repeat then this will be passed to it's repeat parameter.
+    :param times: if stmt_executor's value is timeit.repeat then this will be passed to its repeat parameter.
     :param return_full: a boolean flag that indicates to return full result or not.
     :return: depends on ret_full argument's value. If it is True then returns a tuple else a float.
     """
@@ -73,5 +73,5 @@ def compr_pair_difference(
         )
     print("'" + sec_stmt + "' is potentially " +
           ('faster' if diff_value < 0 else 'slower' if diff_value > 0 else 'alternative') +
-          " then '" + first_stmt + "'"
+          " then '" + first_stmt + "'\n"
           )
