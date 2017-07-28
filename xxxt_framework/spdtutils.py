@@ -1,7 +1,7 @@
 import timeit
 
-
-def compute_pair_difference(
+# TODO replace the 'pair' word by another, more informative, in all functions names.
+def compute_timeit_difference(
         first_stmt, sec_stmt,
         stmt_executor=timeit.timeit,
         setup_for_first='pass', setup_for_sec='pass',
@@ -39,7 +39,7 @@ def compute_pair_difference(
     return (result_for_first, result_for_second, difference) if return_full else difference
 
 
-def compr_pair_difference(
+def compr_timeit_difference(
         first_stmt, sec_stmt,
         stmt_executor=timeit.timeit,
         setup_for_first='pass', setup_for_sec='pass',
@@ -60,7 +60,7 @@ def compr_pair_difference(
     :param return_full: a boolean flag that indicates to return full result or not.
     :return: depends on ret_full argument's value. If it is True then returns a tuple else a float.
     """
-    diff_value = compute_pair_difference(
+    diff_value = compute_timeit_difference(
         first_stmt, sec_stmt, stmt_executor, setup_for_first, setup_for_sec, times, return_full
     )
     if isinstance(diff_value, tuple):
