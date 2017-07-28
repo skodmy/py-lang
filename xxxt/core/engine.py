@@ -186,6 +186,9 @@ def execute_all_for_all(
     
     :param xxxt_filenames: a list with xxxt filenames.
     :param interpreters_execs_names: a list with interpreters executables names.
+    :param only_for_third_python_implementations: a boolean flag which indicates that 
+    __SETTINGS['XXXT_FILES_NAMES_SUFFIXES_ONLY_FOR_THIRD_PYTHON_IMPLEMENTATIONS'] value will be used as a 
+    files_names_suffixes value and only implementations of third python will be used for an execution.
     :param files_names_suffixes: a list of suffixes with which should end each file.
     :return: a list of dictionaries which describes a status of execution xxxt files for each available interpreter.
     """
@@ -199,6 +202,7 @@ def execute_all_for_all(
             lambda interpreter_exec_name: interpreter_exec_name.find('3') != -1,
             interpreters_execs_names
         )
+        files_names_suffixes = __SETTINGS['XXXT_FILES_NAMES_SUFFIXES_ONLY_FOR_THIRD_PYTHON_IMPLEMENTATIONS']
     return {
         interpreter_exec_name: execute_all(xxxt_filenames, interpreter_exec_name, files_names_suffixes)
         for interpreter_exec_name in interpreters_execs_names

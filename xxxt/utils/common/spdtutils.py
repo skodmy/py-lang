@@ -65,8 +65,8 @@ def compr_timeit_difference(
     )
     if isinstance(diff_value, tuple):
         format_pattern = "{}'s call with {} value: {}".format(stmt_executor.__name__, "'{}'", "{}")
-        print(format_pattern.format(sec_stmt, diff_value[1]))
         print(format_pattern.format(first_stmt, diff_value[0]))
+        print(format_pattern.format(sec_stmt, diff_value[1]))
         diff_value = diff_value[2]
         print("The value of difference between {} calls with '{}' and '{}' is: {}".format(
             stmt_executor.__name__, first_stmt, sec_stmt, diff_value)

@@ -1,0 +1,3 @@
+from xxxt.core.utilities import list_available_interpreters_execs_names
+
+AVAILABLE_INTERPRETERS_EXECUTABLES_NAMES = list_available_interpreters_execs_names()
