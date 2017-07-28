@@ -121,7 +121,6 @@ def execute(xxxt_filename: str, interpreter_exec_name: str,
     """
     if files_names_suffixes is None:
         files_names_suffixes = __SETTINGS['XXXT_FILES_NAMES_SUFFIXES']
-    # TODO create separated source of suffixes for python 3 implementations.
     if not isinstance(xxxt_filename, str):
         raise TypeError("filename argument must be a string, not {}".format(xxxt_filename.__class__.__name__))
     if not isinstance(interpreter_exec_name, str):

@@ -14,7 +14,7 @@ def wrap(callable_from_stdlib: Callable[[Any], Any]) -> Callable[[Any], Any]:
         return callable_from_stdlib(*args, **kwargs)
     return wrapper
 
-# TODO finish the doc string.
+
 def compare_tracemalloc_snapshots(
         func_leak_mem: Union[Callable[[Any], Any], Tuple[Callable[[Any], Any], Any, Any]],
         cmp_to_key_type='lineno', cmp_to_cumulative=False

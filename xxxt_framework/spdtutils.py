@@ -1,6 +1,6 @@
 import timeit
 
-# TODO replace the 'pair' word by another, more informative, in all functions names.
+
 def compute_timeit_difference(
         first_stmt, sec_stmt,
         stmt_executor=timeit.timeit,
