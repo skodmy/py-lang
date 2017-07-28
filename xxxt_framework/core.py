@@ -6,7 +6,8 @@ __SETTINGS = {
     'ENVIRONMENT': os.name,
     'CURRENT_WORKING_DIRECTORY': os.getcwd(),
     'AVAILABLE_INTERPRETERS_EXECUTABLES_NAMES': ['python3'],
-    'XXXT_FILES_NAMES_SUFFIXES': ['spd', 'mmr'],
+    'XXXT_FILES_NAMES_SUFFIXES': ['spd', ],
+    'XXXT_FILES_NAMES_SUFFIXES_ONLY_FOR_THIRD_PYTHON_IMPLEMENTATIONS': ['mmr', ],
     'PRINT_EXECUTION_RESULT_ON_CONSOLE': True,
 }
 
@@ -72,19 +73,26 @@ def populate_settings_with_file(filename: str = 'settings.py', directory: str = 
 
 def explore_dir_for_files(
         directory: str = None,
+        only_for_third_python_implementations=False,
         files_names_suffixes: Union[Tuple[str], List[str]] = None
 ) -> List[str]:
     """
     Explores a directory for files that match filter's condition.
     
     :param directory: the directory which will be explored for files.
+    :param only_for_third_python_implementations: a boolean flag which indicates that 
+    __SETTINGS['XXXT_FILES_NAMES_SUFFIXES_ONLY_FOR_THIRD_PYTHON_IMPLEMENTATIONS'] value will be used as
+    files_names_suffixes value.
     :param files_names_suffixes: a list of suffixes with which should end files in the directory.
     :return: a list of found files.
     """
     if directory is None:
         directory = __SETTINGS['CURRENT_WORKING_DIRECTORY']
     if files_names_suffixes is None:
-        files_names_suffixes = __SETTINGS['XXXT_FILES_NAMES_SUFFIXES']
+        if only_for_third_python_implementations:
+            files_names_suffixes = __SETTINGS['XXXT_FILES_NAMES_SUFFIXES_ONLY_FOR_THIRD_PYTHON_IMPLEMENTATIONS']
+        else:
+            files_names_suffixes = __SETTINGS['XXXT_FILES_NAMES_SUFFIXES']
     if not isinstance(directory, str):
         raise TypeError("directory argument must be a string, not {}".format(directory.__class__.__name__))
     if not isinstance(files_names_suffixes, (tuple, list)):
@@ -113,6 +121,7 @@ def execute(xxxt_filename: str, interpreter_exec_name: str,
     """
     if files_names_suffixes is None:
         files_names_suffixes = __SETTINGS['XXXT_FILES_NAMES_SUFFIXES']
+    # TODO create separated source of suffixes for python 3 implementations.
     if not isinstance(xxxt_filename, str):
         raise TypeError("filename argument must be a string, not {}".format(xxxt_filename.__class__.__name__))
     if not isinstance(interpreter_exec_name, str):
@@ -170,6 +179,7 @@ def execute_all(xxxt_filenames: Union[Tuple[str], List[str]], interpreter_exec_n
 def execute_all_for_all(
         xxxt_filenames: List[str],
         interpreters_execs_names: Union[Tuple[str], List[str]] = None,
+        only_for_third_python_implementations = False,
         files_names_suffixes: Union[Tuple[str], List[str]] = None
 ) -> Dict[str, Dict[str, Dict[str, Any]]]:
     """
@@ -185,6 +195,11 @@ def execute_all_for_all(
     if not isinstance(interpreters_execs_names, (tuple, list)):
         raise TypeError("interpreters_execs_names argument must be a tuple of strings or list of strings, not {}".
                         format(interpreters_execs_names.__class__.__name__))
+    if only_for_third_python_implementations:
+        interpreters_execs_names = filter(
+            lambda interpreter_exec_name: interpreter_exec_name.find('3') != -1,
+            interpreters_execs_names
+        )
     return {
         interpreter_exec_name: execute_all(xxxt_filenames, interpreter_exec_name, files_names_suffixes)
         for interpreter_exec_name in interpreters_execs_names
