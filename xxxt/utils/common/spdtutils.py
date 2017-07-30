@@ -1,10 +1,19 @@
 import timeit
 
 
+def set_dflt_setup4sec_stmt(value):
+    if not isinstance(value, str):
+        raise TypeError("value must be a string, not {}".format(value.__class__.__name__))
+    set_dflt_setup4sec_stmt.setup_val = value
+
+
+set_dflt_setup4sec_stmt.setup_value = 'pass'
+
+
 def compute_timeit_difference(
         first_stmt, sec_stmt,
         stmt_executor=timeit.timeit,
-        setup_for_first='pass', setup_for_sec='pass',
+        setup_for_first='pass', setup_for_sec=set_dflt_setup4sec_stmt.setup_value,
         times=10,
         return_full=True
 ):
@@ -42,7 +51,7 @@ def compute_timeit_difference(
 def compr_timeit_difference(
         first_stmt, sec_stmt,
         stmt_executor=timeit.timeit,
-        setup_for_first='pass', setup_for_sec='pass',
+        setup_for_first='pass', setup_for_sec=set_dflt_setup4sec_stmt.setup_value,
         times=10,
         return_full=True
 ):
