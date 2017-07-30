@@ -1,19 +1,10 @@
 import timeit
 
 
-def set_dflt_setup4sec_stmt(value):
-    if not isinstance(value, str):
-        raise TypeError("value must be a string, not {}".format(value.__class__.__name__))
-    set_dflt_setup4sec_stmt.setup_val = value
-
-
-set_dflt_setup4sec_stmt.setup_value = 'pass'
-
-
 def compute_timeit_difference(
         first_stmt, sec_stmt,
+        setup_for_sec='pass', setup_for_first='pass',
         stmt_executor=timeit.timeit,
-        setup_for_first='pass', setup_for_sec=set_dflt_setup4sec_stmt.setup_value,
         times=10,
         return_full=True
 ):
@@ -24,9 +15,9 @@ def compute_timeit_difference(
     
     :param first_stmt: the first statement from the pair for the stmt_executor call.
     :param sec_stmt: the second statement from the pair for the stmt_executor call.
-    :param stmt_executor: a callable object that will be used for executing the pair statements.
-    :param setup_for_first: a setup for first statement.
     :param setup_for_sec: a setup for second statement.
+    :param setup_for_first: a setup for first statement.
+    :param stmt_executor: a callable object that will be used for executing the pair statements.
     :param times: if stmt_executor's value is timeit.repeat then this will be passed to its repeat parameter.
     :param return_full: a boolean flag that indicates to return full result or not.
     :return: depends on ret_full argument's value. If it is True then returns a tuple else a float.
@@ -50,8 +41,8 @@ def compute_timeit_difference(
 
 def compr_timeit_difference(
         first_stmt, sec_stmt,
+        setup_for_sec='pass', setup_for_first='pass',
         stmt_executor=timeit.timeit,
-        setup_for_first='pass', setup_for_sec=set_dflt_setup4sec_stmt.setup_value,
         times=10,
         return_full=True
 ):
@@ -62,15 +53,15 @@ def compr_timeit_difference(
 
     :param first_stmt: the first statement from the pair for the stmt_executor call.
     :param sec_stmt: the second statement from the pair for the stmt_executor call.
-    :param stmt_executor: a callable object that will be used for executing the pair statements.
-    :param setup_for_first: a setup for first statement.
     :param setup_for_sec: a setup for second statement.
+    :param setup_for_first: a setup for first statement.
+    :param stmt_executor: a callable object that will be used for executing the pair statements.
     :param times: if stmt_executor's value is timeit.repeat then this will be passed to its repeat parameter.
     :param return_full: a boolean flag that indicates to return full result or not.
     :return: depends on ret_full argument's value. If it is True then returns a tuple else a float.
     """
     diff_value = compute_timeit_difference(
-        first_stmt, sec_stmt, stmt_executor, setup_for_first, setup_for_sec, times, return_full
+        first_stmt, sec_stmt, setup_for_sec, setup_for_first, stmt_executor, times, return_full
     )
     if isinstance(diff_value, tuple):
         format_pattern = "{}'s call with {} value: {}".format(stmt_executor.__name__, "'{}'", "{}")
