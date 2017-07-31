@@ -81,92 +81,28 @@ def compr_timeit_difference(
           )
 
 
-class TimeitDifferenceComputer:
-    _setup4second = 'pass'
-    _setup4first = 'pass'
-    _statements_executor = timeit.timeit
-    _times_to_repeat = 10
-    _return_full_computation_result = True
+class TimeitDifferenceComputationModel(object):
+    first_statement = 'pass'
+    second_statement = 'pass'
+    setup4second = 'pass'
+    setup4first = 'pass'
+    statements_executor = 'timeit'
+    times_to_repeat = 10
+    return_full_computation_result = True
 
-    def __init__(
-            self,
-            setup4second=None, setup4first=None,
-            statements_executor=None, times_to_repeat=None, return_full_computation_result=None
-    ):
-        self.setup4second = setup4second
-        self.setup4first = setup4first
-        self.statements_executor = statements_executor
-        self.times_to_repeat = times_to_repeat
-        self.return_full_computation_result = return_full_computation_result
-
-    @property
-    def setup4second(self):
-        return self._setup4second
-
-    @property
-    def setup4first(self):
-        return self._setup4first
-
-    @property
-    def statements_executor(self):
-        return self._statements_executor
-
-    @property
-    def times_to_repeat(self):
-        return self._times_to_repeat
-
-    @property
-    def return_full_computation_result(self):
-        return self._return_full_computation_result
-
-    @staticmethod
-    def _validate_value4setup(name, value):
-        if value is not None:
-            if not isinstance(value, str):
-                raise TypeError("value for {} must be of a string type, not {}".format(name, value.__class__.__name__))
-            return value
-        return 'pass'
-
-    @setup4second.setter
-    def setup4second(self, value):
-        self._setup4second = TimeitDifferenceComputer._validate_value4setup('setup4second', value)
-
-    @setup4first.setter
-    def setup4first(self, value):
-        self._setup4first = TimeitDifferenceComputer._validate_value4setup('setup4first', value)
-
-    @statements_executor.setter
-    def statements_executor(self, value):
-        if value is not None:
-            if not callable(value):
-                raise ValueError("value for statements_executor must be a callable object")
-            if value not in (timeit.timeit, timeit.repeat):
-                raise ValueError("value for statements_executor must be a timeit.timeit or a timeit.repeat")
-            self._statements_executor = value
-
-    @times_to_repeat.setter
-    def times_to_repeat(self, value):
-        if value is not None:
-            if not isinstance(value, int):
-                raise TypeError("value for times_to_repeat must be of an integer type")
-            if value < 0:
-                raise ValueError("value for times_to_repeat must be greater then 0")
-        self._times_to_repeat = value
-
-    @return_full_computation_result.setter
-    def return_full_computation_result(self, value):
-        self._return_full_computation_result = bool(value)
-
-    def compute(self, first_statement, second_statement):
-        return compute_timeit_difference(
-            first_statement,
-            second_statement,
+    def __prepare_and_pack_args(self, first_statement, second_statement):
+        return (
+            first_statement if first_statement is not None else self.first_statement,
+            second_statement if second_statement is not None else self.second_statement,
             self.setup4second,
             self.setup4first,
-            self.statements_executor,
+            timeit.repeat if self.statements_executor == 'repeat' else timeit.timeit,
             self.times_to_repeat,
             self.return_full_computation_result
         )
 
-    def comprint(self, first_statement, second_statement):
-        self.compute(first_statement, second_statement)
+    def compute(self, first_statement=None, second_statement=None):
+        return compute_timeit_difference(*self.__prepare_and_pack_args(first_statement, second_statement))
+
+    def comprint(self, first_statement=None, second_statement=None):
+        compr_timeit_difference(*self.__prepare_and_pack_args(first_statement, second_statement))
