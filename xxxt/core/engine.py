@@ -1,9 +1,10 @@
+import sysconfig
 import os
 import subprocess
 from typing import Union, Tuple, List, Any, Callable, Dict
 
 __SETTINGS = {
-    'ENVIRONMENT': os.name,
+    'PLATFORM': sysconfig.get_platform(),
     'CURRENT_WORKING_DIRECTORY': os.getcwd(),
     'AVAILABLE_INTERPRETERS_EXECUTABLES_NAMES': ['python3'],
     'XXXT_FILES_NAMES_SUFFIXES': ['spd', ],
