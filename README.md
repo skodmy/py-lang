@@ -1,2 +1,2 @@
 # py-lang
-Set of projects which describes and tests some language features.
+Project which describes and tests some language features.
